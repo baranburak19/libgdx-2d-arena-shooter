@@ -26,5 +26,10 @@ public class BaseUIScreen extends BaseScreen{
 		game.batch.draw(bgImage, 0, -backgroundOffset + Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		game.batch.end();
 	}
+	
+	@Override
+	public void hide() {
+		Gdx.input.setInputProcessor(null);
+	}
 
 }

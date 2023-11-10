@@ -1,17 +1,13 @@
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.mygdx.game.ArenaShooterGame;
 
 public class BaseScreen implements Screen{
 	final ArenaShooterGame game;
-	protected OrthographicCamera camera;
 	
 	public BaseScreen(ArenaShooterGame game) {
 		this.game = game;
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
 	}
 
 	@Override

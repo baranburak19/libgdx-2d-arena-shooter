@@ -8,8 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArenaShooterGame;
 
@@ -25,7 +23,6 @@ public class LeaderboardScreen extends BaseUIScreen {
 		skin = new Skin(Gdx.files.internal("star-soldier-ui/star-soldier-ui.json"));
 		
 		stage = new Stage(new ScreenViewport());
-		Gdx.input.setInputProcessor(stage);
 		
 		Table root = new Table();
 		root.setFillParent(true);
@@ -56,6 +53,11 @@ public class LeaderboardScreen extends BaseUIScreen {
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
+	}
+	
+	@Override
+	public void show() {
+		Gdx.input.setInputProcessor(stage);
 	}
 	
 	@Override
