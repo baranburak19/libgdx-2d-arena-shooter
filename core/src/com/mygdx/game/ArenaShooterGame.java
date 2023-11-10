@@ -18,7 +18,8 @@ public class ArenaShooterGame extends Game {
 	public LeaderboardScreen leaderboardScreen;
 	public SettingsScreen settingsScreen;
 	
-	public float volumeMultiplier = 0.005f;
+	public float soundMultiplier = 0.5f;
+	public float musicMultiplier = 0.5f;
 	public float difficulty = 1;
 	
 	@Override

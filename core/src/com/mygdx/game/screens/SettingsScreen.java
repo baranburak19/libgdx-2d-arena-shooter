@@ -33,11 +33,19 @@ public class SettingsScreen extends BaseScreen {
 		root.setFillParent(true);
 		stage.addActor(root);
 		
-		Label volumeLabel = new Label("Volume", skin);
-		root.add(volumeLabel).pad(10);
-		Slider volumeSlider = new Slider(0, 100, 1, false, skin);
-		volumeSlider.setValue(50);
-		root.add(volumeSlider);
+		Label soundLabel = new Label("Sounds", skin);
+		root.add(soundLabel).pad(10);
+		Slider soundSlider = new Slider(0, 100, 1, false, skin);
+		soundSlider.setValue(game.soundMultiplier * 100);
+		root.add(soundSlider);
+		
+		root.row();
+		
+		Label musicLabel = new Label("Musics", skin);
+		root.add(musicLabel).pad(10);
+		Slider musicSlider = new Slider(0, 100, 1, false, skin);
+		musicSlider.setValue(game.musicMultiplier * 100);
+		root.add(musicSlider);
 		
 		root.row();
 		
@@ -59,11 +67,20 @@ public class SettingsScreen extends BaseScreen {
 			}
 		});
 		
-		volumeSlider.addListener(new ChangeListener() {
+		soundSlider.addListener(new ChangeListener() {
 		    @Override
 		    public void changed(ChangeEvent event, Actor actor) {
 		        Slider slider = (Slider) actor;
-		        game.volumeMultiplier = slider.getValue() / 10000;
+		        game.soundMultiplier = slider.getValue() / 100;
+		        //game.setScreen(new GameScreen(game));
+		    }   
+		});
+		
+		musicSlider.addListener(new ChangeListener() {
+		    @Override
+		    public void changed(ChangeEvent event, Actor actor) {
+		        Slider slider = (Slider) actor;
+		        game.musicMultiplier = slider.getValue() / 100;
 		        //game.setScreen(new GameScreen(game));
 		    }   
 		});
