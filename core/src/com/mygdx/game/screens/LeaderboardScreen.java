@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArenaShooterGame;
 
-public class LeaderboardScreen extends BaseScreen {
+public class LeaderboardScreen extends BaseUIScreen {
 
 	private Skin skin;
 	private Stage stage;
@@ -46,6 +46,8 @@ public class LeaderboardScreen extends BaseScreen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		super.render(delta);
 		
 		stage.act();
 		stage.draw();

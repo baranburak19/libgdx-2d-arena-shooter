@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.screens.BaseScreen;
 import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.screens.LeaderboardScreen;
 import com.mygdx.game.screens.MainMenuScreen;
@@ -32,6 +33,11 @@ public class ArenaShooterGame extends Game {
 	@Override
 	public void render () {
 		super.render();
+	}
+	
+	@Override
+	public void resize(int width, int height) {
+		
 	}
 	
 	@Override

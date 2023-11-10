@@ -19,13 +19,10 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArenaShooterGame;
 
-public class MainMenuScreen extends BaseScreen {
+public class MainMenuScreen extends BaseUIScreen {
 	
 	private Skin skin;
 	private Stage stage;
-	
-	private Texture bgImage;
-	private int backgroundOffset;
 	
 	public MainMenuScreen(final ArenaShooterGame game) {
 		super(game);
@@ -34,9 +31,6 @@ public class MainMenuScreen extends BaseScreen {
 		skin = new Skin(Gdx.files.internal("star-soldier-ui/star-soldier-ui.json"));
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
-		
-		bgImage = new Texture(Gdx.files.internal("bg-layers/blue_nebula_02.png")); 
-		backgroundOffset = 0;
 		
 		Table root = new Table();
 		root.setFillParent(true);
@@ -87,15 +81,8 @@ public class MainMenuScreen extends BaseScreen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(.2f, .2f, .2f, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		backgroundOffset++;
-		if(backgroundOffset % Gdx.graphics.getHeight() == 0)
-			backgroundOffset = 0;
-		
-		game.batch.begin();
-		game.batch.draw(bgImage, 0, -backgroundOffset, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		game.batch.draw(bgImage, 0, -backgroundOffset + Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		game.batch.end();
+	
+		super.render(delta);
 		
 		stage.act();
 		stage.draw();
