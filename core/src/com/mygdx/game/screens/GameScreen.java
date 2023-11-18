@@ -13,11 +13,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.ArenaShooterGame;
 import com.mygdx.game.DBManager;
+import com.mygdx.game.animation.Explosion;
 import com.mygdx.game.objects.*;
 
 public class GameScreen extends BaseScreen{
@@ -34,6 +36,7 @@ public class GameScreen extends BaseScreen{
 	  					  enemyShipTextureRegion, enemyShieldTextureRegion,
 	  					  playerLaserTextureRegion, enemyLaserTextureRegion;
 	private Texture crosshairTexture;
+	private Texture explosionTexture;
 	
 	// world parameters
 	private final float WORLD_WIDTH = 300;
@@ -51,6 +54,7 @@ public class GameScreen extends BaseScreen{
 	private LinkedList<EnemyShip> enemyShipList;
 	private LinkedList<Laser> playerLaserList;
 	private LinkedList<Laser> enemyLaserList;
+	private LinkedList<Explosion> explosionList;
 	
 	private Music gameMusic;
 	private Sound playerShotSound, gameOverSound, shieldHitSound;
@@ -89,6 +93,7 @@ public class GameScreen extends BaseScreen{
 		enemyLaserTextureRegion = textureAtlas.findRegion("laserGreen02");
 		
 		crosshairTexture = new Texture("game-main/crosshair101.png");
+		explosionTexture = new Texture("game-main/explosion.png");
 		
 		// initialize sounds & music
 		shieldHitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shield-hit.wav"));
@@ -107,12 +112,14 @@ public class GameScreen extends BaseScreen{
 
 		playerLaserList = new LinkedList<Laser>();
 		enemyLaserList = new LinkedList<Laser>();
+		
+		explosionList = new LinkedList<Explosion>();
 	}
 
 	@Override
 	public void render(float deltaTime) {
 		if(isGameOver) {
-			gameOverSound.play();
+			gameOverSound.play(game.soundMultiplier);
 			DBManager dbManager = new DBManager();
 			dbManager.saveScore(game.difficulty, score);
 			dbManager.closeConnection();
@@ -160,9 +167,26 @@ public class GameScreen extends BaseScreen{
 		// check collisions
 		checkCollisions();
 		
+		// explosions
+		updateAndRenderExplosions(deltaTime);
+		
 		batch.end();
 	}
 	
+	private void updateAndRenderExplosions(float deltaTime) {
+		ListIterator<Explosion> explosionIterator = explosionList.listIterator();
+		while(explosionIterator.hasNext()) {
+			Explosion explosion = explosionIterator.next();
+			explosion.update(deltaTime);
+			if(explosion.isFinished()) {
+				explosionIterator.remove();				
+			}
+			else {
+				explosion.draw(batch);
+			}
+		}
+	}
+
 	private float distanceToPlayerShip(EnemyShip enemyShip) {
 		Vector2 distanceVector = new Vector2();
 		distanceVector.x = Math.abs(enemyShip.hitBox.x - playerShip.hitBox.x);
@@ -181,6 +205,9 @@ public class GameScreen extends BaseScreen{
 				if(enemyShip.isCollideWith(laser.hitBox)) {
 					if(enemyShip.registerHit()) {
 						enemysShipListIterator.remove();
+						explosionList.add(new Explosion(explosionTexture,
+														new Rectangle(enemyShip.hitBox),
+														1f));
 						score+= 100;
 					}
 					laserListIterator.remove();
@@ -196,6 +223,9 @@ public class GameScreen extends BaseScreen{
 			Laser laser = laserListIterator.next();
 			if(playerShip.isCollideWith(laser.hitBox)) {
 				if(playerShip.registerHit()) {
+					explosionList.add(new Explosion(explosionTexture,
+							new Rectangle(playerShip.hitBox), 
+							2f));
 					playerShip.lives--;
 					if(playerShip.lives < 0) isGameOver = true;
 				} else {
@@ -240,9 +270,9 @@ public class GameScreen extends BaseScreen{
 			enemyShipList.add(new EnemyShip(15, 1, 
 					  ArenaShooterGame.random.nextFloat()*(WORLD_WIDTH-20)+5,
 					  ArenaShooterGame.random.nextFloat()*(WORLD_HEIGHT-20)+5,
-					  12, 12, 
-					  2f, 6, 
-					  100, 0.8f,
+					  15, 15, 
+					  1.5f, 8, 
+					  80 + (10 * game.difficulty), 1f / game.difficulty,
 					  enemyShipTextureRegion, 
 					  enemyShieldTextureRegion,
 					  enemyLaserTextureRegion));
@@ -340,7 +370,6 @@ public class GameScreen extends BaseScreen{
 		
 		// check for left click
 		if(Gdx.input.justTouched() && playerShip.canFire()) {
-			// player lasers
 	        Laser[] lasers = playerShip.fireLasers();
 	       	for(Laser laser : lasers) {
 	       		playerLaserList.add(laser);  	
@@ -412,6 +441,7 @@ public class GameScreen extends BaseScreen{
 	@Override
 	public void hide() {
 		this.dispose();
+		Gdx.input.setCursorCatched(false);
 	}
 	
 	@Override
@@ -419,6 +449,8 @@ public class GameScreen extends BaseScreen{
 		if(UIMusic.isPlaying())
 			UIMusic.stop();
 		gameMusic.play();
+		
+		Gdx.input.setCursorCatched(true);
 	}
 	
 	@Override

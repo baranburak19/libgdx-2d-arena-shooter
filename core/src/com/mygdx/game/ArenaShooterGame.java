@@ -42,10 +42,5 @@ public class ArenaShooterGame extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
-//		if(this.getScreen() != null) this.screen.dispose();
-//		if(mainMenuScreen != null) mainMenuScreen.dispose();
-//		if(gameScreen != null) gameScreen.dispose();
-//		if(leaderboardScreen != null) leaderboardScreen.dispose();
-//		if(settingsScreen != null) settingsScreen.dispose();
 	}
 }

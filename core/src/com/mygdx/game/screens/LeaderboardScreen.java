@@ -58,7 +58,6 @@ public class LeaderboardScreen extends BaseScreen {
 	}
 	
 	private void populateScoresTable(Table scoresTable) {
-		//TODO Move this to leaderboards
 		DBManager dbManager = new DBManager();
 		try {
 			ResultSet retrievedResult = dbManager.getScores();
@@ -66,11 +65,10 @@ public class LeaderboardScreen extends BaseScreen {
 			while (retrievedResult.next()) {
                 int score = retrievedResult.getInt("score");
                 int difficulty = retrievedResult.getInt("difficulty");
-                String date = retrievedResult.getString("date"); // Assuming date is stored as a String in the database
+                String date = retrievedResult.getString("date"); 
 
-                System.out.println("Score: " + score + "Difficulty: " + difficulty + " Date: " + date);
-                // Do something with the retrieved data
-                
+                //System.out.println("Score: " + score + "Difficulty: " + difficulty + " Date: " + date);
+                         
                 scoresTable.add(new TextButton("DIFFICULTY: " + difficulty, skin));
                 scoresTable.add(new TextButton("SCORE: " + score, skin));
                 scoresTable.add(new TextButton("DATE:" + date , skin)).row();

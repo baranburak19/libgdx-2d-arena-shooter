@@ -75,7 +75,6 @@ public class SettingsScreen extends BaseScreen {
 		    public void changed(ChangeEvent event, Actor actor) {
 		        Slider slider = (Slider) actor;
 		        game.soundMultiplier = slider.getValue() / 100;
-		        //game.setScreen(new GameScreen(game));
 		    }   
 		});
 		
@@ -84,7 +83,6 @@ public class SettingsScreen extends BaseScreen {
 		    public void changed(ChangeEvent event, Actor actor) {
 		        Slider slider = (Slider) actor;
 		        game.musicMultiplier = slider.getValue() / 100;
-		        //game.setScreen(new GameScreen(game));
 		    }   
 		});
 		
@@ -93,7 +91,6 @@ public class SettingsScreen extends BaseScreen {
 		    public void changed(ChangeEvent event, Actor actor) {
 		        Slider slider = (Slider) actor;
 		        game.difficulty = (int)slider.getValue();
-		        //game.setScreen(new GameScreen(game));
 		    }   
 		});
 	}
