@@ -39,6 +39,7 @@ public class MainMenuScreen extends BaseScreen {
 		TextButton startBtn = new TextButton("Start", skin);
 		TextButton leaderboardstBtn = new TextButton("Leaderboards", skin);
 		TextButton optionsBtn = new TextButton("Options", skin);
+		TextButton quitBtn = new TextButton("Quit", skin);
 		
 		root.add(titleBtn).growY().expandX();
 		root.row();
@@ -49,6 +50,8 @@ public class MainMenuScreen extends BaseScreen {
 		menuBtns.add(leaderboardstBtn);
 		menuBtns.row();
 		menuBtns.add(optionsBtn).grow();
+		menuBtns.row();
+		menuBtns.add(quitBtn).growX();
 		
 		//root.debugAll();
 
@@ -73,6 +76,13 @@ public class MainMenuScreen extends BaseScreen {
 			public void changed(ChangeEvent event, Actor actor) {
 				game.setScreen(new SettingsScreen(game));
 				System.out.println("info: setSettingsScreen called");
+			}
+		});
+		
+		quitBtn.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				Gdx.app.exit();
 			}
 		});
 	}

@@ -55,7 +55,7 @@ public class SettingsScreen extends BaseScreen {
 		Label difficultyLabel = new Label("Difficulty (1-5)", skin);
 		root.add(difficultyLabel).pad(10);
 		Slider difficultySlider = new Slider(1, 5, 1, false, skin);
-		difficultySlider.setValue(1);
+		difficultySlider.setValue(game.difficulty);
 		root.add(difficultySlider);
 		
 		root.row();

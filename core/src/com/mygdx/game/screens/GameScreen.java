@@ -8,17 +8,23 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+
 import com.mygdx.game.ArenaShooterGame;
 import com.mygdx.game.DBManager;
+import com.mygdx.game.Range;
 import com.mygdx.game.animation.Explosion;
 import com.mygdx.game.objects.*;
 
@@ -43,11 +49,11 @@ public class GameScreen extends BaseScreen{
 	private final float WORLD_HEIGHT = 200;
 	
 	// timings
-	private float timeBetweenEnemySpawns = 1.5f;
+	private float timeBetweenEnemySpawns = 5f;
 	private float enemySpawnTimer = 0;
 	
 	private float[] backgroundOffsets = {0, 0, 0, 0};
-	private float backgroundMaxScrollingSpeed;
+	private float backgroundMaxScrollingSpeed = (float)WORLD_HEIGHT / 4;
 
 	// game objects
 	private PlayerShip playerShip;
@@ -56,21 +62,32 @@ public class GameScreen extends BaseScreen{
 	private LinkedList<Laser> enemyLaserList;
 	private LinkedList<Explosion> explosionList;
 	
+	// music & sounds
 	private Music gameMusic;
-	private Sound playerShotSound, gameOverSound, shieldHitSound;
+	private Sound playerShotSound, gameOverSound, shieldHitSound,
+				  playerDamagedSound, enemyBlowUp;
 		
-	public int score = 0;
-	public boolean isGameOver;
+	// game states & variables
+	private int score = 0;
+	private boolean isGameOver;
+	private int waveSize = 2;
+	
+	// debug
+	private ShapeRenderer shapeRenderer = new ShapeRenderer();
+	private boolean isGodMode = false;
 	
 	public GameScreen(final ArenaShooterGame game) {
 		super(game);
 		game.gameScreen = this;
+		// Adjust possible enemy spawn coordinates
+		ArenaShooterGame.randomGenerator.addXRange(new Range(0, (int)WORLD_WIDTH/3));
+		ArenaShooterGame.randomGenerator.addXRange(new Range((int)WORLD_WIDTH*2/3, (int)WORLD_WIDTH));
+		ArenaShooterGame.randomGenerator.addYRange(new Range(0, (int)WORLD_HEIGHT/3));
+		ArenaShooterGame.randomGenerator.addYRange(new Range((int)WORLD_HEIGHT*2/3, (int)WORLD_HEIGHT));
 		
 		camera = new OrthographicCamera();
 		viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
-		batch = new SpriteBatch();
-		
-		backgroundMaxScrollingSpeed = (float)WORLD_HEIGHT / 4;
+		batch = new SpriteBatch(); 
 		
 		// set up texture atlas
 		textureAtlas = new TextureAtlas("game-main/2d-arena-shooter.atlas");
@@ -99,12 +116,15 @@ public class GameScreen extends BaseScreen{
 		shieldHitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shield-hit.wav"));
 		gameOverSound = Gdx.audio.newSound(Gdx.files.internal("sounds/game-over.wav"));
 		playerShotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/retro-laser-shot-01.wav"));
+		playerDamagedSound = Gdx.audio.newSound(Gdx.files.internal("sounds/player-hit.wav"));
+		enemyBlowUp = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy-destroyed.wav"));
+		
 		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/DavidKBD - InterstellarPack - 02 - Plasma Storm.ogg"));
 		gameMusic.setLooping(true);
 		gameMusic.setVolume(game.musicMultiplier);	
 	
 		// set up initial game objects
-		playerShip = new PlayerShip(40, 3, 
+		playerShip = new PlayerShip(60, 3, 
 									WORLD_WIDTH/2, WORLD_HEIGHT/2, 15, 15,
 									2, 10, 150, 0.2f, 
 									playerShipTextureRegion, playerShieldTextureRegion, playerLaserTextureRegion);
@@ -118,6 +138,10 @@ public class GameScreen extends BaseScreen{
 
 	@Override
 	public void render(float deltaTime) {
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			isGameOver = true;
+		   }
+		
 		if(isGameOver) {
 			gameOverSound.play(game.soundMultiplier);
 			DBManager dbManager = new DBManager();
@@ -140,26 +164,12 @@ public class GameScreen extends BaseScreen{
 		// update&draw player ship and spawn enemy ships
 		playerShip.updateFields(deltaTime);
 		playerShip.draw(batch);
-		
-		// update, move and draw enemies
+
+		// spawn enemies
 		spawnEnemyShips(deltaTime);
 		
-		ListIterator<EnemyShip> enemyShipListIterator = enemyShipList.listIterator();
-		while(enemyShipListIterator.hasNext()) {
-			EnemyShip enemyShip = enemyShipListIterator.next();
-			
-		    Vector2 enemyNewDirection = new Vector2(0,0);
-		    Vector2 playerLocation, enemyLocation;
-		    playerLocation = new Vector2(playerShip.hitBox.x, playerShip.hitBox.y);
-		    enemyLocation = new Vector2(enemyShip.hitBox.x, enemyShip.hitBox.y);
-
-		    enemyNewDirection = playerLocation.sub(enemyLocation).nor() ;
-		    
-		    enemyShip.updateFields(deltaTime, enemyNewDirection.x, enemyNewDirection.y);		
-			moveAndRotateEnemy(enemyShip, deltaTime);
-			
-	        enemyShip.draw(batch);
-		}
+		// update, move and draw enemies
+		updateMoveDrawEnemies(deltaTime);
 		
 		// create and render lasers
 		renderLasers(deltaTime);
@@ -171,6 +181,63 @@ public class GameScreen extends BaseScreen{
 		updateAndRenderExplosions(deltaTime);
 		
 		batch.end();
+
+		// debug hitboxes
+//		shapeRenderer.setProjectionMatrix(camera.combined);
+//		renderDebug(shapeRenderer);
+	}
+	
+	public void renderDebug(ShapeRenderer shapeRenderer) {
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(Color.WHITE);
+		
+		// player ship
+		shapeRenderer.rect(playerShip.hitBox.x, playerShip.hitBox.y, playerShip.hitBox.width, playerShip.hitBox.height);
+		
+		// enemy ships
+		shapeRenderer.setColor(Color.RED);
+		ListIterator<EnemyShip> enemyShipListIterator = enemyShipList.listIterator();
+		while(enemyShipListIterator.hasNext()) {
+			EnemyShip enemyShip = enemyShipListIterator.next();
+			// Draw the rectangle's borders using the ShapeRenderer
+			shapeRenderer.rect(enemyShip.hitBox.x, enemyShip.hitBox.y, enemyShip.hitBox.width, enemyShip.hitBox.height);
+		}
+		
+		// enemy lasers
+		shapeRenderer.setColor(Color.CYAN);
+		ListIterator<Laser> enemyLaserIterator= enemyLaserList.listIterator();
+		while(enemyLaserIterator.hasNext()) {
+			Laser enemyLaser= enemyLaserIterator.next();
+			shapeRenderer.rect(enemyLaser.hitBox.x, enemyLaser.hitBox.y, enemyLaser.hitBox.width, enemyLaser.hitBox.height);
+		}
+		// player lasers
+		ListIterator<Laser> playerLaserIterator= playerLaserList.listIterator();
+		while(playerLaserIterator.hasNext()) {
+			Laser playerLaser= playerLaserIterator.next();
+			shapeRenderer.rect(playerLaser.hitBox.x, playerLaser.hitBox.y, playerLaser.hitBox.width, playerLaser.hitBox.height);
+		}
+		
+		shapeRenderer.end();
+    }
+	
+	private void updateMoveDrawEnemies(float deltaTime) {
+		ListIterator<EnemyShip> enemyShipListIterator = enemyShipList.listIterator();
+		while(enemyShipListIterator.hasNext()) {
+			EnemyShip enemyShip = enemyShipListIterator.next();
+			
+		    Vector2 enemyNewDirection = new Vector2(0,0);
+		    Vector2 playerLocation, enemyLocation;
+		    playerLocation = new Vector2(playerShip.hitBox.x, playerShip.hitBox.y);
+		    enemyLocation = new Vector2(enemyShip.hitBox.x, enemyShip.hitBox.y);
+
+		    enemyNewDirection = playerLocation.sub(enemyLocation).nor() ;
+		    // update enemy
+		    enemyShip.updateFields(deltaTime, enemyNewDirection.x, enemyNewDirection.y);		
+			// move and rotate 
+		    moveAndRotateEnemy(enemyShip, deltaTime);
+			// draw enemy
+	        enemyShip.draw(batch);
+		}
 	}
 	
 	private void updateAndRenderExplosions(float deltaTime) {
@@ -205,6 +272,7 @@ public class GameScreen extends BaseScreen{
 				if(enemyShip.isCollideWith(laser.hitBox)) {
 					if(enemyShip.registerHit()) {
 						enemysShipListIterator.remove();
+						enemyBlowUp.play(game.soundMultiplier);
 						explosionList.add(new Explosion(explosionTexture,
 														new Rectangle(enemyShip.hitBox),
 														1f));
@@ -213,7 +281,7 @@ public class GameScreen extends BaseScreen{
 					laserListIterator.remove();
 					break; 
 					// if laser hits to the ship, remove laser and register hit and skip to next laser. 
-					// Without break it would try check if same (removed)laser hit other ships
+					// Without break it would try check if same (to be removed)laser hit other ships
 				}
 			}
 		}
@@ -227,7 +295,8 @@ public class GameScreen extends BaseScreen{
 							new Rectangle(playerShip.hitBox), 
 							2f));
 					playerShip.lives--;
-					if(playerShip.lives < 0) isGameOver = true;
+					playerDamagedSound.play(game.soundMultiplier);
+					if(playerShip.lives < 0 && !isGodMode) isGameOver = true;
 				} else {
 					shieldHitSound.play(game.soundMultiplier);
 				}
@@ -267,15 +336,17 @@ public class GameScreen extends BaseScreen{
 		enemySpawnTimer += delta;
 		
 		if(enemySpawnTimer > timeBetweenEnemySpawns) {
-			enemyShipList.add(new EnemyShip(15, 1, 
-					  ArenaShooterGame.random.nextFloat()*(WORLD_WIDTH-20)+5,
-					  ArenaShooterGame.random.nextFloat()*(WORLD_HEIGHT-20)+5,
+			for(int i = 0; i < waveSize; ++i) {
+				enemyShipList.add(new EnemyShip(60, 1, 
+					  ArenaShooterGame.randomGenerator.generateRandomInXRanges(),  
+					  ArenaShooterGame.randomGenerator.generateRandomInYRanges(),
 					  15, 15, 
 					  1.5f, 8, 
 					  80 + (10 * game.difficulty), 1f / game.difficulty,
 					  enemyShipTextureRegion, 
 					  enemyShieldTextureRegion,
-					  enemyLaserTextureRegion));
+					  enemyLaserTextureRegion));			
+			}
 			
 			enemySpawnTimer -= timeBetweenEnemySpawns;
 		}
@@ -359,7 +430,9 @@ public class GameScreen extends BaseScreen{
 		Vector2 cursorPoint = new Vector2(xCursorPixels, yCursorPixels);
 		cursorPoint = viewport.unproject(cursorPoint);
 		
-		batch.draw(crosshairTexture, cursorPoint.x - 15/2, cursorPoint.y - 15/2, 15, 15);
+		batch.setColor(Color.FIREBRICK);
+		batch.draw(crosshairTexture, cursorPoint.x, cursorPoint.y, 16, 16);
+		batch.setColor(new Color(1, 1, 1, 1));
 		
 		// rotate the ship to cursor
 		Vector2 cursorRelativeToPlayer = new Vector2(cursorPoint.x - playerShip.hitBox.x, cursorPoint.y - playerShip.hitBox.y);
@@ -398,6 +471,10 @@ public class GameScreen extends BaseScreen{
 		if(Gdx.input.isKeyPressed(Input.Keys.A) && leftLimit < 0) {
 			playerShip.move(Math.max(-playerShip.movementSpeed*deltaTime, leftLimit), 0f);
 		}
+		
+		if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+			isGodMode = !isGodMode;
+		   }
 	}
 
 	private void renderBackground(float deltaTime) {

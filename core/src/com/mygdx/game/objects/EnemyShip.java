@@ -40,14 +40,14 @@ public class EnemyShip extends BaseShip{
 	public Laser[] fireLasers() {
 		Laser[] laser = new Laser[2];
 		laser[0] = new Laser(hitBox.x + hitBox.width*0.18f, 
-							 hitBox.y - laserHeight,
+							 hitBox.y + laserHeight,
 							 laserWidth,
 							 laserHeight,
 							 laserMovementSpeed,
 							 rotationAngle,
 							 laserTextureRegion);
 		laser[1] = new Laser(hitBox.x + hitBox.width*0.82f, 
-				 hitBox.y - laserHeight,
+				 hitBox.y + laserHeight,
 				 laserWidth,
 				 laserHeight,
 				 laserMovementSpeed,

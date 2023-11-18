@@ -1,7 +1,5 @@
 package com.mygdx.game;
 
-import java.util.Random;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.screens.GameScreen;
@@ -11,7 +9,7 @@ import com.mygdx.game.screens.SettingsScreen;
 
 public class ArenaShooterGame extends Game {
 	
-	public static Random random = new Random();
+	public static RandomGenerator randomGenerator = new RandomGenerator();
 	public SpriteBatch batch;
 	
 	public MainMenuScreen mainMenuScreen;
@@ -19,9 +17,9 @@ public class ArenaShooterGame extends Game {
 	public LeaderboardScreen leaderboardScreen;
 	public SettingsScreen settingsScreen;
 	
-	public float soundMultiplier = 0.1f;
-	public float musicMultiplier = 0.1f; //TODO set back to 0.5f default
-	public int difficulty = 1;
+	public float soundMultiplier = 0.2f; //TODO set back to 0.5f default
+	public float musicMultiplier = 0.2f; //TODO set back to 0.5f default
+	public int difficulty = 2;
 	
 	@Override
 	public void create () {
