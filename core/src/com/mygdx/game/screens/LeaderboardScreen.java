@@ -37,7 +37,7 @@ public class LeaderboardScreen extends BaseScreen {
 		root.setFillParent(true);
 		stage.addActor(root);
 		
-		TextButton title = new TextButton ("LEADERBOARDS", skin);
+		TextButton title = new TextButton ("LEADERBOARDS  (TOP 5)", skin);
 		root.add(title).grow().row();
 		
 		Table scoresTable = new Table();
@@ -65,11 +65,13 @@ public class LeaderboardScreen extends BaseScreen {
 			
 			while (retrievedResult.next()) {
                 int score = retrievedResult.getInt("score");
+                int difficulty = retrievedResult.getInt("difficulty");
                 String date = retrievedResult.getString("date"); // Assuming date is stored as a String in the database
 
-                System.out.println("Score: " + score + " Date: " + date);
+                System.out.println("Score: " + score + "Difficulty: " + difficulty + " Date: " + date);
                 // Do something with the retrieved data
                 
+                scoresTable.add(new TextButton("DIFFICULTY: " + difficulty, skin));
                 scoresTable.add(new TextButton("SCORE: " + score, skin));
                 scoresTable.add(new TextButton("DATE:" + date , skin)).row();
             }

@@ -8,7 +8,7 @@ public class DBManager {
     public DBManager() {
         // Initialize database connection
         try {
-        	Class.forName("org.sqlite.JDBC");
+        	Class.forName("org.sqlite.JDBC"); //  load and register the sqlite JDBC driver
             connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\baran\\libGDX-repo\\2d-arena-db\\2d-arena-shooter-database.db");
         } catch (Exception e) {
             e.printStackTrace();
@@ -21,6 +21,7 @@ public class DBManager {
             Statement statement = connection.createStatement();
             String sql = "CREATE TABLE IF NOT EXISTS scores (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            		"difficulty INTEGER NOT NULL," +
                     "score INTEGER NOT NULL," +
                     "date DATE DEFAULT CURRENT_DATE)";
             statement.executeUpdate(sql);
@@ -30,11 +31,12 @@ public class DBManager {
         }
     }
     
-    public void saveScore(int score) {
+    public void saveScore(int difficulty, int score) {
         try {
-            String sql = "INSERT INTO scores (score, date) VALUES (?, DATE('now'))";
+            String sql = "INSERT INTO scores (difficulty, score, date) VALUES (?, ?, DATE('now'))";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, score);
+            statement.setInt(1, difficulty);
+            statement.setInt(2, score);
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
@@ -45,7 +47,7 @@ public class DBManager {
     public ResultSet getScores() {
         ResultSet resultSet = null;
         try {
-            String sql = "SELECT * FROM scores ORDER BY score DESC LIMIT 5";
+            String sql = "SELECT * FROM scores ORDER BY difficulty DESC, score DESC LIMIT 5";
             Statement statement = connection.createStatement();
             resultSet = statement.executeQuery(sql);
         } catch (SQLException e) {

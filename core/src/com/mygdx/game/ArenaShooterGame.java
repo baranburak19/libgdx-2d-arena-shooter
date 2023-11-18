@@ -21,7 +21,7 @@ public class ArenaShooterGame extends Game {
 	
 	public float soundMultiplier = 0.1f;
 	public float musicMultiplier = 0.1f; //TODO set back to 0.5f default
-	public float difficulty = 1;
+	public int difficulty = 1;
 	
 	@Override
 	public void create () {

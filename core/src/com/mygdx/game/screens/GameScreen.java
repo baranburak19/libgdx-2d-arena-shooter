@@ -40,7 +40,7 @@ public class GameScreen extends BaseScreen{
 	private final float WORLD_HEIGHT = 200;
 	
 	// timings
-	private float timeBetweenEnemySpawns = 2f;
+	private float timeBetweenEnemySpawns = 1.5f;
 	private float enemySpawnTimer = 0;
 	
 	private float[] backgroundOffsets = {0, 0, 0, 0};
@@ -53,7 +53,7 @@ public class GameScreen extends BaseScreen{
 	private LinkedList<Laser> enemyLaserList;
 	
 	private Music gameMusic;
-	private Sound playerShotSound;
+	private Sound playerShotSound, gameOverSound, shieldHitSound;
 		
 	public int score = 0;
 	public boolean isGameOver;
@@ -91,8 +91,10 @@ public class GameScreen extends BaseScreen{
 		crosshairTexture = new Texture("game-main/crosshair101.png");
 		
 		// initialize sounds & music
-		playerShotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/9mm-pop-shot.wav"));
-		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/hurt-me-plenty.wav"));
+		shieldHitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/shield-hit.wav"));
+		gameOverSound = Gdx.audio.newSound(Gdx.files.internal("sounds/game-over.wav"));
+		playerShotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/retro-laser-shot-01.wav"));
+		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/DavidKBD - InterstellarPack - 02 - Plasma Storm.ogg"));
 		gameMusic.setLooping(true);
 		gameMusic.setVolume(game.musicMultiplier);	
 	
@@ -110,8 +112,9 @@ public class GameScreen extends BaseScreen{
 	@Override
 	public void render(float deltaTime) {
 		if(isGameOver) {
+			gameOverSound.play();
 			DBManager dbManager = new DBManager();
-			dbManager.saveScore(score);
+			dbManager.saveScore(game.difficulty, score);
 			dbManager.closeConnection();
 			
 			game.setScreen(new LeaderboardScreen(game));
@@ -194,8 +197,9 @@ public class GameScreen extends BaseScreen{
 			if(playerShip.isCollideWith(laser.hitBox)) {
 				if(playerShip.registerHit()) {
 					playerShip.lives--;
-					if(playerShip.lives < 0) 
-						isGameOver = true;
+					if(playerShip.lives < 0) isGameOver = true;
+				} else {
+					shieldHitSound.play(game.soundMultiplier);
 				}
 				laserListIterator.remove();
 			}

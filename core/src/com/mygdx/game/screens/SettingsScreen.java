@@ -92,7 +92,7 @@ public class SettingsScreen extends BaseScreen {
 		    @Override
 		    public void changed(ChangeEvent event, Actor actor) {
 		        Slider slider = (Slider) actor;
-		        game.difficulty = slider.getValue();
+		        game.difficulty = (int)slider.getValue();
 		        //game.setScreen(new GameScreen(game));
 		    }   
 		});

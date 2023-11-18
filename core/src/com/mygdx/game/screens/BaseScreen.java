@@ -6,12 +6,13 @@ import com.badlogic.gdx.audio.Music;
 import com.mygdx.game.ArenaShooterGame;
 
 public class BaseScreen implements Screen{
-	public final ArenaShooterGame game;
+	//TODO private - noSetter 
+	public static ArenaShooterGame game;
 	
 	public static Music UIMusic;
 	
 	public BaseScreen(ArenaShooterGame game) {
-		this.game = game;
+		BaseScreen.game = game;
 		
 		if(UIMusic == null) {
 			UIMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/hurt-me-plenty.wav"));
@@ -22,8 +23,7 @@ public class BaseScreen implements Screen{
 
 	@Override
 	public void show() {
-		if(!UIMusic.isPlaying())
-			UIMusic.play();
+		if(!UIMusic.isPlaying()) UIMusic.play();
 	}
 
 	@Override
