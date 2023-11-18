@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import com.mygdx.game.ArenaShooterGame;
 
@@ -123,6 +122,7 @@ public class SettingsScreen extends BaseScreen {
 	
 	@Override
 	public void show() {
+		super.show();
 		Gdx.input.setInputProcessor(stage);
 	}
 	

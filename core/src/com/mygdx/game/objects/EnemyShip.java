@@ -3,8 +3,6 @@ package com.mygdx.game.objects;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.ArenaShooterGame;
-
 public class EnemyShip extends BaseShip{
 
 	public Vector2 directionVector;

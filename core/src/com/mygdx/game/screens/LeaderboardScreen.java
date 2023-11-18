@@ -1,5 +1,8 @@
 package com.mygdx.game.screens;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,8 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArenaShooterGame;
+import com.mygdx.game.DBManager;
 
 public class LeaderboardScreen extends BaseScreen {
 
@@ -34,8 +37,17 @@ public class LeaderboardScreen extends BaseScreen {
 		root.setFillParent(true);
 		stage.addActor(root);
 		
+		TextButton title = new TextButton ("LEADERBOARDS", skin);
+		root.add(title).grow().row();
+		
+		Table scoresTable = new Table();
+		root.add(scoresTable).expand().center().row();
+		populateScoresTable(scoresTable);
+		
 		TextButton mainMenuBtn = new TextButton("Back", skin);
-		stage.addActor(mainMenuBtn);
+		root.add(mainMenuBtn).expandY().bottom().left().padBottom(10).padLeft(10);
+		
+		//root.setDebugAll(true);
 		
 		mainMenuBtn.addListener(new ChangeListener() {
 			@Override
@@ -45,6 +57,29 @@ public class LeaderboardScreen extends BaseScreen {
 		});
 	}
 	
+	private void populateScoresTable(Table scoresTable) {
+		//TODO Move this to leaderboards
+		DBManager dbManager = new DBManager();
+		try {
+			ResultSet retrievedResult = dbManager.getScores();
+			
+			while (retrievedResult.next()) {
+                int score = retrievedResult.getInt("score");
+                String date = retrievedResult.getString("date"); // Assuming date is stored as a String in the database
+
+                System.out.println("Score: " + score + " Date: " + date);
+                // Do something with the retrieved data
+                
+                scoresTable.add(new TextButton("SCORE: " + score, skin));
+                scoresTable.add(new TextButton("DATE:" + date , skin)).row();
+            }
+			
+			dbManager.closeConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -69,6 +104,7 @@ public class LeaderboardScreen extends BaseScreen {
 	
 	@Override
 	public void show() {
+		super.show();
 		Gdx.input.setInputProcessor(stage);
 	}
 	

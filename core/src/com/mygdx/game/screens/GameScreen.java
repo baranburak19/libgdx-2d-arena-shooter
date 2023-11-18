@@ -13,16 +13,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.ArenaShooterGame;
+import com.mygdx.game.DBManager;
 import com.mygdx.game.objects.*;
 
 public class GameScreen extends BaseScreen{
@@ -115,6 +110,10 @@ public class GameScreen extends BaseScreen{
 	@Override
 	public void render(float deltaTime) {
 		if(isGameOver) {
+			DBManager dbManager = new DBManager();
+			dbManager.saveScore(score);
+			dbManager.closeConnection();
+			
 			game.setScreen(new LeaderboardScreen(game));
 			return;
 		}
@@ -413,6 +412,8 @@ public class GameScreen extends BaseScreen{
 	
 	@Override
 	public void show() {
+		if(UIMusic.isPlaying())
+			UIMusic.stop();
 		gameMusic.play();
 	}
 	
