@@ -65,7 +65,7 @@ public class EnemyShip extends BaseShip{
 	public void draw(Batch batch) {
 		batch.draw(shipTextureRegion, hitBox.x, hitBox.y, hitBox.width/2, hitBox.height/2, hitBox.width, hitBox.height, 1, 1, rotationAngle + 180);
 		if(shieldAmount > 0) {
-			batch.draw(shipTextureRegion, hitBox.x, hitBox.y - hitBox.height*0.2f, hitBox.width/2, hitBox.height/2, hitBox.width, hitBox.height, 1, 1, rotationAngle  + 180);
+			batch.draw(shieldTextureRegion, hitBox.x, hitBox.y - hitBox.height*0.2f, hitBox.width/2, hitBox.height/2, hitBox.width, hitBox.height, 1, 1, rotationAngle  + 180);
 		}
 	}
 }
