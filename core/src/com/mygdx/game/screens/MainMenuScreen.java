@@ -1,17 +1,23 @@
 package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArenaShooterGame;
 
-public class MainMenuScreen extends BaseUIScreen {
+public class MainMenuScreen extends BaseScreen {
+	
+	private Texture bgImage;
+	private int backgroundOffset;
 	
 	private Skin skin;
 	private Stage stage;
@@ -20,8 +26,11 @@ public class MainMenuScreen extends BaseUIScreen {
 		super(game);
 		game.mainMenuScreen = this;
 		
+		bgImage = new Texture(Gdx.files.internal("bg-layers/blue_nebula_02.png")); 
+		backgroundOffset = 0;
+		
 		skin = new Skin(Gdx.files.internal("star-soldier-ui/star-soldier-ui.json"));
-		stage = new Stage(new ScreenViewport());
+		stage = new Stage();
 		
 		Table root = new Table();
 		root.setFillParent(true);
@@ -50,7 +59,7 @@ public class MainMenuScreen extends BaseUIScreen {
 			@Override
 			public void changed(ChangeEvent event , Actor actor) {
 				game.setScreen(new GameScreen(game));
-				System.out.println("setgamescreen");
+				System.out.println("info: setGameScreen called");
 			}
 		});
 		
@@ -58,7 +67,7 @@ public class MainMenuScreen extends BaseUIScreen {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				game.setScreen(new LeaderboardScreen(game));
-				System.out.println("setleaderboardscreen");
+				System.out.println("info: setLeaderboardScreen called");
 			}
 		});
 		
@@ -66,17 +75,24 @@ public class MainMenuScreen extends BaseUIScreen {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				game.setScreen(new SettingsScreen(game));
-				System.out.println("setsettingscreen");
+				System.out.println("info: setSettingsScreen called");
 			}
 		});
 	}
 	
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(.2f, .2f, .2f, 0);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	
-		super.render(delta);
+		backgroundOffset++;
+		if(backgroundOffset % Gdx.graphics.getHeight() == 0)
+			backgroundOffset = 0;
+		
+		stage.getBatch().begin();
+		stage.getBatch().draw(bgImage, 0, -backgroundOffset, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		stage.getBatch().draw(bgImage, 0, -backgroundOffset + Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		stage.getBatch().end();
 		
 		stage.act();
 		stage.draw();
@@ -93,8 +109,15 @@ public class MainMenuScreen extends BaseUIScreen {
 		Gdx.input.setInputProcessor(stage);
 	}
 	
+	@Override 
+	public void hide() {
+		Gdx.input.setInputProcessor(null);
+		this.dispose();
+	}
+	
 	@Override
 	public void dispose() {
+		bgImage.dispose();
 		skin.dispose();
 		stage.dispose();
 		System.out.println("Disposed MainMenuScreen");

@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("2D Arena Shooter");
 		config.useVsync(true);
-		config.setWindowedMode(800, 480);
+		config.setWindowedMode(900, 600);
 		new Lwjgl3Application(new ArenaShooterGame(), config);
 	}
 }

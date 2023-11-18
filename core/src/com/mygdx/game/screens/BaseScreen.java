@@ -4,7 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.mygdx.game.ArenaShooterGame;
 
 public class BaseScreen implements Screen{
-	final ArenaShooterGame game;
+	public final ArenaShooterGame game;
 	
 	public BaseScreen(ArenaShooterGame game) {
 		this.game = game;

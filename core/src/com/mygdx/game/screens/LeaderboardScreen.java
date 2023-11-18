@@ -2,6 +2,7 @@ package com.mygdx.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -11,8 +12,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.ArenaShooterGame;
 
-public class LeaderboardScreen extends BaseUIScreen {
+public class LeaderboardScreen extends BaseScreen {
 
+	private Texture bgImage;
+	private int backgroundOffset;
+	
 	private Skin skin;
 	private Stage stage;
 	
@@ -20,9 +24,11 @@ public class LeaderboardScreen extends BaseUIScreen {
 		super(game);
 		game.leaderboardScreen = this;
 		
-		skin = new Skin(Gdx.files.internal("star-soldier-ui/star-soldier-ui.json"));
+		bgImage = new Texture(Gdx.files.internal("bg-layers/blue_nebula_02.png")); 
+		backgroundOffset = 0;
 		
-		stage = new Stage(new ScreenViewport());
+		skin = new Skin(Gdx.files.internal("star-soldier-ui/star-soldier-ui.json"));
+		stage = new Stage();
 		
 		Table root = new Table();
 		root.setFillParent(true);
@@ -41,10 +47,16 @@ public class LeaderboardScreen extends BaseUIScreen {
 	
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		super.render(delta);
+		backgroundOffset++;
+		if(backgroundOffset % Gdx.graphics.getHeight() == 0)
+			backgroundOffset = 0;
+		
+		game.batch.begin();
+		game.batch.draw(bgImage, 0, -backgroundOffset, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		game.batch.draw(bgImage, 0, -backgroundOffset + Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		game.batch.end();
 		
 		stage.act();
 		stage.draw();
@@ -58,6 +70,12 @@ public class LeaderboardScreen extends BaseUIScreen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
+	}
+	
+	@Override 
+	public void hide() {
+		Gdx.input.setInputProcessor(null);
+		
 	}
 	
 	@Override

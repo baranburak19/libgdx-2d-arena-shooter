@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import com.mygdx.game.ArenaShooterGame;
 
-public class SettingsScreen extends BaseUIScreen {
+public class SettingsScreen extends BaseScreen {
 
 	private Skin skin;
 	private Stage stage;
@@ -31,7 +31,7 @@ public class SettingsScreen extends BaseUIScreen {
 		backgroundOffset = 0;
 		
 		skin = new Skin(Gdx.files.internal("star-soldier-ui/star-soldier-ui.json"));
-		stage = new Stage(new ScreenViewport());
+		stage = new Stage();
 		
 		Table root = new Table();
 		root.setFillParent(true);
@@ -101,7 +101,6 @@ public class SettingsScreen extends BaseUIScreen {
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		backgroundOffset++;
@@ -127,10 +126,16 @@ public class SettingsScreen extends BaseUIScreen {
 		Gdx.input.setInputProcessor(stage);
 	}
 	
+	@Override 
+	public void hide() {
+		Gdx.input.setInputProcessor(null);
+		
+	}
+	
 	@Override
 	public void dispose() {
 		skin.dispose();
 		stage.dispose();
-		System.out.println("Disposed SettingScreen");
+		System.out.println("Disposed SettingsScreen");
 	}
 }
