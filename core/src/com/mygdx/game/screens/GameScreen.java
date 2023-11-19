@@ -198,7 +198,7 @@ public class GameScreen extends BaseScreen{
 //		renderDebug(shapeRenderer);
 	}
 	
-	public void renderDebug(ShapeRenderer shapeRenderer) {
+	private void renderDebug(ShapeRenderer shapeRenderer) {
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(Color.WHITE);
 		

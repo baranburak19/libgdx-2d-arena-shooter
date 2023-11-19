@@ -21,7 +21,7 @@ public abstract class BaseShip {
 	public float timeSinceLastShot = 0;
 	
 	// Graphics and bounding rectangle
-	TextureRegion shipTextureRegion, shieldTextureRegion, laserTextureRegion;
+	public TextureRegion shipTextureRegion, shieldTextureRegion, laserTextureRegion;
 	public Rectangle hitBox;
 	public float lastRotationAngle = 0;
 	public float rotationAngle = 0;
