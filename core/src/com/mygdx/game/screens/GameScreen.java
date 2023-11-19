@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import com.mygdx.game.ArenaShooterGame;
 import com.mygdx.game.DBManager;
+import com.mygdx.game.Hud;
 import com.mygdx.game.Range;
 import com.mygdx.game.animation.Explosion;
 import com.mygdx.game.objects.*;
@@ -33,6 +34,7 @@ public class GameScreen extends BaseScreen{
 	// screen
 	private Camera camera;
 	private Viewport viewport;
+	private Hud hud;
 	
 	// graphics
 	private SpriteBatch batch;
@@ -49,7 +51,7 @@ public class GameScreen extends BaseScreen{
 	private final float WORLD_HEIGHT = 200;
 	
 	// timings
-	private float timeBetweenEnemySpawns = 5f;
+	private float timeBetweenEnemySpawns = 3f;
 	private float enemySpawnTimer = 0;
 	
 	private float[] backgroundOffsets = {0, 0, 0, 0};
@@ -65,7 +67,7 @@ public class GameScreen extends BaseScreen{
 	// music & sounds
 	private Music gameMusic;
 	private Sound playerShotSound, gameOverSound, shieldHitSound,
-				  playerDamagedSound, enemyBlowUp;
+				  playerDamagedSound, enemyBlowUp, enemyShieldHitSound;
 		
 	// game states & variables
 	private int score = 0;
@@ -73,6 +75,7 @@ public class GameScreen extends BaseScreen{
 	private int waveSize = 2;
 	
 	// debug
+	@SuppressWarnings("unused")
 	private ShapeRenderer shapeRenderer = new ShapeRenderer();
 	private boolean isGodMode = false;
 	
@@ -118,13 +121,14 @@ public class GameScreen extends BaseScreen{
 		playerShotSound = Gdx.audio.newSound(Gdx.files.internal("sounds/retro-laser-shot-01.wav"));
 		playerDamagedSound = Gdx.audio.newSound(Gdx.files.internal("sounds/player-hit.wav"));
 		enemyBlowUp = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy-destroyed.wav"));
+		enemyShieldHitSound = Gdx.audio.newSound(Gdx.files.internal("sounds/enemy-shield-hit.ogg"));
 		
 		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/DavidKBD - InterstellarPack - 02 - Plasma Storm.ogg"));
 		gameMusic.setLooping(true);
 		gameMusic.setVolume(game.musicMultiplier);	
 	
 		// set up initial game objects
-		playerShip = new PlayerShip(60, 3, 
+		playerShip = new PlayerShip(60, 6, 
 									WORLD_WIDTH/2, WORLD_HEIGHT/2, 15, 15,
 									2, 10, 150, 0.2f, 
 									playerShipTextureRegion, playerShieldTextureRegion, playerLaserTextureRegion);
@@ -134,6 +138,9 @@ public class GameScreen extends BaseScreen{
 		enemyLaserList = new LinkedList<Laser>();
 		
 		explosionList = new LinkedList<Explosion>();
+		
+		// Initialize HUD
+		hud = new Hud(batch, this.viewport);
 	}
 
 	@Override
@@ -182,6 +189,10 @@ public class GameScreen extends BaseScreen{
 		
 		batch.end();
 
+		hud.update(playerShip.lives, playerShip.shieldAmount, score);
+		hud.getStage().act();
+		hud.getStage().draw();
+		
 		// debug hitboxes
 //		shapeRenderer.setProjectionMatrix(camera.combined);
 //		renderDebug(shapeRenderer);
@@ -270,6 +281,7 @@ public class GameScreen extends BaseScreen{
 				EnemyShip enemyShip = enemysShipListIterator.next();
 				
 				if(enemyShip.isCollideWith(laser.hitBox)) {
+					enemyShieldHitSound.play(game.soundMultiplier);
 					if(enemyShip.registerHit()) {
 						enemysShipListIterator.remove();
 						enemyBlowUp.play(game.soundMultiplier);
@@ -337,7 +349,7 @@ public class GameScreen extends BaseScreen{
 		
 		if(enemySpawnTimer > timeBetweenEnemySpawns) {
 			for(int i = 0; i < waveSize; ++i) {
-				enemyShipList.add(new EnemyShip(60, 1, 
+				enemyShipList.add(new EnemyShip(60, 2, 
 					  ArenaShooterGame.randomGenerator.generateRandomInXRanges(),  
 					  ArenaShooterGame.randomGenerator.generateRandomInYRanges(),
 					  15, 15, 
@@ -429,6 +441,11 @@ public class GameScreen extends BaseScreen{
 		
 		Vector2 cursorPoint = new Vector2(xCursorPixels, yCursorPixels);
 		cursorPoint = viewport.unproject(cursorPoint);
+		
+		if(cursorPoint.x < 0) cursorPoint.x = 0;
+		if(cursorPoint.x > WORLD_WIDTH - 16) cursorPoint.x = WORLD_WIDTH - 16;
+		if(cursorPoint.y < 0) cursorPoint.y = 0;
+		if(cursorPoint.y > WORLD_HEIGHT - 16) cursorPoint.y = WORLD_HEIGHT - 16;
 		
 		batch.setColor(Color.FIREBRICK);
 		batch.draw(crosshairTexture, cursorPoint.x, cursorPoint.y, 16, 16);
