@@ -484,6 +484,11 @@ public class GameScreen extends BaseScreen{
 			playerShotSound.play(game.soundMultiplier);
 		}
 		
+		// check for dash input
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && playerShip.canDash()) {
+			playerShip.dash();
+		}
+		
 		// define maximum space on sides
 		float leftLimit, rightLimit, upLimit, downLimit;
 		leftLimit = -playerShip.hitBox.x;
@@ -492,7 +497,7 @@ public class GameScreen extends BaseScreen{
 		upLimit = WORLD_HEIGHT - playerShip.hitBox.y - playerShip.hitBox.height;
 
 		
-		// keyboard input to move
+		// keyboard input to move 
 		if(Gdx.input.isKeyPressed(Input.Keys.W) && upLimit > 0) {
 			playerShip.move(0f, Math.min(playerShip.movementSpeed*deltaTime, upLimit));
 		}
@@ -508,7 +513,7 @@ public class GameScreen extends BaseScreen{
 		
 		if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
 			isGodMode = !isGodMode;
-		   }
+		}
 	}
 
 	private void renderBackground(float deltaTime) {

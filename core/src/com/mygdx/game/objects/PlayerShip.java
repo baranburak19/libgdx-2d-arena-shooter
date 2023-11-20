@@ -6,6 +6,12 @@ public class PlayerShip extends BaseShip{
 
 	public int lives = 3;
 	
+	private boolean isDashing = false;
+	private float dashTimer = 0;
+	private float dashDuration = 0.1f;
+	private float timeSinceLastDash = 0;
+	private float dashCooldown = 1;
+	
 	public PlayerShip(float movementSpeed, int shieldAmount, float xCenter, float yCenter, float width, float height,
 			float laserWidth, float laserHeight, float laserMovementSpeed, float timeBetweenShots,
 			TextureRegion shipTexture, TextureRegion shieldTexture, TextureRegion laserTexture) {
@@ -35,5 +41,31 @@ public class PlayerShip extends BaseShip{
 		timeSinceLastShot = 0;
 		
 		return laser;
+	}
+	
+	public void updateFields(float deltaTime) {
+		super.updateFields(deltaTime);
+		
+		if(isDashing) {
+			dashTimer += deltaTime;			
+		}else {
+			timeSinceLastDash += deltaTime;
+		}
+		
+		if(dashTimer > dashDuration) {
+			dashTimer = 0;
+			isDashing = false;
+			this.movementSpeed /= 5f;
+		}
+	}
+	
+	public boolean canDash() {
+		return timeSinceLastDash > dashCooldown;
+	}
+	
+	public void dash() {
+		this.movementSpeed *= 5f;
+		this.isDashing = true;				
+		timeSinceLastDash = 0;
 	}
 }
