@@ -47,7 +47,7 @@ public class DBManager {
     public ResultSet getScores() {
         ResultSet resultSet = null;
         try {
-            String sql = "SELECT * FROM scores ORDER BY difficulty DESC, score DESC LIMIT 5";
+            String sql = "SELECT * FROM scores ORDER BY 2*(difficulty*difficulty)/((difficulty+1)*(difficulty+1))*score DESC LIMIT 5";
             Statement statement = connection.createStatement();
             resultSet = statement.executeQuery(sql);
         } catch (SQLException e) {

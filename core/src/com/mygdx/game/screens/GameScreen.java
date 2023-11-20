@@ -151,9 +151,11 @@ public class GameScreen extends BaseScreen{
 		
 		if(isGameOver) {
 			gameOverSound.play(game.soundMultiplier);
-			DBManager dbManager = new DBManager();
-			dbManager.saveScore(game.difficulty, score);
-			dbManager.closeConnection();
+			if(score > 0) {
+				DBManager dbManager = new DBManager();
+				dbManager.saveScore(game.difficulty, score);
+				dbManager.closeConnection();
+			}
 			
 			game.setScreen(new LeaderboardScreen(game));
 			return;
@@ -318,19 +320,19 @@ public class GameScreen extends BaseScreen{
 	}
 
 	private void moveAndRotateEnemy(EnemyShip enemyShip, float delta) {
-		float leftLimit, rightLimit, upLimit, downLimit;
-		leftLimit = -enemyShip.hitBox.x;
-		downLimit = -enemyShip.hitBox.y;
-		rightLimit = WORLD_WIDTH - enemyShip.hitBox.x - enemyShip.hitBox.width;
-		upLimit = WORLD_HEIGHT - enemyShip.hitBox.y - enemyShip.hitBox.height;
-
 		Vector2 enemyDirectionVector = enemyShip.getDirectionVector();
 		
-		// rotate the ship to player
+		// rotate towards to player
 		float angle = enemyDirectionVector.angleDeg(new Vector2(0,1));
 		enemyShip.rotationAngle = angle;
 		
 		if(distanceToPlayerShip(enemyShip) > 50) {
+			float leftLimit, rightLimit, upLimit, downLimit;
+			leftLimit = -enemyShip.hitBox.x;
+			downLimit = -enemyShip.hitBox.y;
+			rightLimit = WORLD_WIDTH - enemyShip.hitBox.x - enemyShip.hitBox.width;
+			upLimit = WORLD_HEIGHT - enemyShip.hitBox.y - enemyShip.hitBox.height;
+			
 			float xMove = enemyDirectionVector.x/enemyDirectionVector.len() *  enemyShip.movementSpeed * delta;
 			float yMove = enemyDirectionVector.y/enemyDirectionVector.len() *  enemyShip.movementSpeed * delta;
 				
@@ -349,12 +351,15 @@ public class GameScreen extends BaseScreen{
 		
 		if(enemySpawnTimer > timeBetweenEnemySpawns) {
 			for(int i = 0; i < waveSize; ++i) {
+				int x = ArenaShooterGame.randomGenerator.generateRandomInXRanges();
+				int y = ArenaShooterGame.randomGenerator.generateRandomInYRanges();
 				enemyShipList.add(new EnemyShip(60, 2, 
-					  ArenaShooterGame.randomGenerator.generateRandomInXRanges(),  
-					  ArenaShooterGame.randomGenerator.generateRandomInYRanges(),
+					  x,  
+					  y,
 					  15, 15, 
 					  1.5f, 8, 
 					  80 + (10 * game.difficulty), 1f / game.difficulty,
+					  new Vector2(x > WORLD_WIDTH/2 ? -1 : 1, y > WORLD_HEIGHT/2 ? -1 : 1),
 					  enemyShipTextureRegion, 
 					  enemyShieldTextureRegion,
 					  enemyLaserTextureRegion));			
@@ -376,6 +381,7 @@ public class GameScreen extends BaseScreen{
 	        	for(Laser laser : lasers) {
 	        		enemyLaserList.add(laser);
 	        	}
+	        	playerShotSound.play(game.soundMultiplier*0.2f);
 	        }	
 		}
         

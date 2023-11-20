@@ -1,5 +1,7 @@
 package com.mygdx.game.objects;
 
+import java.util.Random;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -9,13 +11,15 @@ public class EnemyShip extends BaseShip{
 	public float timeSinceLastDirectionChange = 0;
 	public float directionChangeFrequency = 0.75f;
 	
+	private static Random randomGenerator = new Random();
+	
 	public EnemyShip(float movementSpeed, int shieldAmount, float xCenter, float yCenter, float width, float height,
-			float laserWidth, float laserHeight, float laserMovementSpeed, float timeBetweenShots,
+			float laserWidth, float laserHeight, float laserMovementSpeed, float timeBetweenShots, Vector2 directionVector,
 			TextureRegion shipTexture, TextureRegion shieldTexture, TextureRegion laserTexture) {
 		super(movementSpeed, shieldAmount, xCenter, yCenter, width, height, laserWidth, laserHeight, laserMovementSpeed,
 				timeBetweenShots, shipTexture, shieldTexture, laserTexture);
 		
-		directionVector = new Vector2(0, -1);
+		this.directionVector = directionVector;
 	}
 	
 	public Vector2 getDirectionVector() {
