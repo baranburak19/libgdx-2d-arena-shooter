@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Laser {
-	//TODO encapsulation, getters and setters
 	public float movementSpeed;
 	public float rotationAngle;
 	

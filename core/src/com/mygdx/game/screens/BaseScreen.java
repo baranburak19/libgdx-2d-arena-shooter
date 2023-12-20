@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Music;
 import com.mygdx.game.ArenaShooterGame;
 
 public class BaseScreen implements Screen{
-	//TODO private - noSetter 
 	public static ArenaShooterGame game;
 	
 	public static Music UIMusic;

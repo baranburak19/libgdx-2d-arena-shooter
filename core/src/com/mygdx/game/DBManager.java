@@ -1,19 +1,26 @@
 package com.mygdx.game;
 
+import java.io.File;
 import java.sql.*;
 
 public class DBManager {
     private Connection connection;
     
     public DBManager() {
+        String dbFileName = "../2d-arena-shooter-db/2d-arena-shooter-database.db"; // SQLite database file name
+        File dbFile = new File(dbFileName);
+
         // Initialize database connection
         try {
-        	Class.forName("org.sqlite.JDBC"); //  load and register the sqlite JDBC driver
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\baran\\libGDX-repo\\2d-arena-db\\2d-arena-shooter-database.db");
+            if(!dbFile.exists()){
+                dbFile.getParentFile().mkdirs(); // Create parent directories
+            }
+
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
+            createScoresTable();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        createScoresTable();
     }
     
     public void createScoresTable() {

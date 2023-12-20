@@ -13,7 +13,6 @@ public class PlayerShip extends BaseShip{
 				timeBetweenShots, shipTexture, shieldTexture, laserTexture);
 		
 	}
-	//TODO encapsulation, getters and setters
 
 	@Override
 	public Laser[] fireLasers() {

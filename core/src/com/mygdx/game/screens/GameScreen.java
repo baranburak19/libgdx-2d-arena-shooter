@@ -150,7 +150,7 @@ public class GameScreen extends BaseScreen{
 		   }
 		
 		if(isGameOver) {
-			gameOverSound.play(game.soundMultiplier);
+			gameOverSound.play(game.soundMultiplier*2);
 			if(score > 0) {
 				DBManager dbManager = new DBManager();
 				dbManager.saveScore(game.difficulty, score);
@@ -403,7 +403,7 @@ public class GameScreen extends BaseScreen{
         	if(laser.rotationAngle > 0 || laser.rotationAngle < 180) {
         		laser.hitBox.x += laser.movementSpeed * Math.sin(laser.rotationAngle * 6.14/360) * delta;
         	}
-        	else if(laser.rotationAngle < 360 || laser.rotationAngle > 180) {
+        	else if(laser.rotationAngle < 360 && laser.rotationAngle > 180) {
         		laser.hitBox.x -= laser.movementSpeed * Math.sin(laser.rotationAngle * 6.14/360) * delta;
         	}
         	
