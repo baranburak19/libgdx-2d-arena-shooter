@@ -17,8 +17,8 @@ public class ArenaShooterGame extends Game {
 	public LeaderboardScreen leaderboardScreen;
 	public SettingsScreen settingsScreen;
 	
-	public float soundMultiplier = 0.2f; //TODO set back to 0.5f default
-	public float musicMultiplier = 0.2f; //TODO set back to 0.5f default
+	public float soundMultiplier = 0.5f; 
+	public float musicMultiplier = 0.5f; 
 	public int difficulty = 2;
 	
 	@Override

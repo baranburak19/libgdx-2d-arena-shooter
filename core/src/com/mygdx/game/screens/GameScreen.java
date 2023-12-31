@@ -78,6 +78,7 @@ public class GameScreen extends BaseScreen{
 	@SuppressWarnings("unused")
 	private ShapeRenderer shapeRenderer = new ShapeRenderer();
 	private boolean isGodMode = false;
+	private boolean isDebug = false;
 	
 	public GameScreen(final ArenaShooterGame game) {
 		super(game);
@@ -149,6 +150,10 @@ public class GameScreen extends BaseScreen{
 			isGameOver = true;
 		   }
 		
+		if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+			isDebug = !isDebug;
+		}
+		
 		if(isGameOver) {
 			gameOverSound.play(game.soundMultiplier*2);
 			if(score > 0) {
@@ -196,8 +201,10 @@ public class GameScreen extends BaseScreen{
 		hud.getStage().draw();
 		
 		// debug hitboxes
-//		shapeRenderer.setProjectionMatrix(camera.combined);
-//		renderDebug(shapeRenderer);
+		if(isDebug) {
+		shapeRenderer.setProjectionMatrix(camera.combined);
+		renderDebug(shapeRenderer);
+		}
 	}
 	
 	private void renderDebug(ShapeRenderer shapeRenderer) {

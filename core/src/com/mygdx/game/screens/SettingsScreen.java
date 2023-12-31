@@ -126,7 +126,7 @@ public class SettingsScreen extends BaseScreen {
 	@Override 
 	public void hide() {
 		Gdx.input.setInputProcessor(null);
-		
+		this.dispose();
 	}
 	
 	@Override
