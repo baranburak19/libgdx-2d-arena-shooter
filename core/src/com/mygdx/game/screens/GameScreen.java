@@ -73,9 +73,9 @@ public class GameScreen extends BaseScreen{
 	private int score = 0;
 	private boolean isGameOver;
 	private int waveSize = 2;
+	private int shieldThreshold = 1000;
 	
 	// debug
-	@SuppressWarnings("unused")
 	private ShapeRenderer shapeRenderer = new ShapeRenderer();
 	private boolean isGodMode = false;
 	private boolean isDebug = false;
@@ -146,13 +146,13 @@ public class GameScreen extends BaseScreen{
 
 	@Override
 	public void render(float deltaTime) {
-		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			isGameOver = true;
-		   }
-		
 		if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
 			isDebug = !isDebug;
 		}
+		
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			isGameOver = true;
+		   }
 		
 		if(isGameOver) {
 			gameOverSound.play(game.soundMultiplier*2);
@@ -199,6 +199,11 @@ public class GameScreen extends BaseScreen{
 		hud.update(playerShip.lives, playerShip.shieldAmount, score);
 		hud.getStage().act();
 		hud.getStage().draw();
+		
+		if(score != 0 && score % shieldThreshold == 0) {
+			playerShip.shieldAmount++;
+			shieldThreshold += 1000;
+		}
 		
 		// debug hitboxes
 		if(isDebug) {
@@ -302,7 +307,7 @@ public class GameScreen extends BaseScreen{
 					laserListIterator.remove();
 					break; 
 					// if laser hits to the ship, remove laser and register hit and skip to next laser. 
-					// Without break it would try check if same (to be removed)laser hit other ships
+					// Without break it would try to check if same (just removed)laser hit other ships
 				}
 			}
 		}
@@ -316,6 +321,7 @@ public class GameScreen extends BaseScreen{
 							new Rectangle(playerShip.hitBox), 
 							2f));
 					playerShip.lives--;
+					playerShip.movementSpeed *= 0.8;
 					playerDamagedSound.play(game.soundMultiplier);
 					if(playerShip.lives < 0 && !isGodMode) isGameOver = true;
 				} else {
@@ -377,8 +383,6 @@ public class GameScreen extends BaseScreen{
 	}
 
 	private void renderLasers(float delta) {
-		//  create new lasers
-		
         //   enemy lasers
 		ListIterator<EnemyShip> enemyShipListIterator = enemyShipList.listIterator();
 		while(enemyShipListIterator.hasNext()) {
@@ -553,8 +557,7 @@ public class GameScreen extends BaseScreen{
 	
 	@Override
 	public void show() {
-		if(UIMusic.isPlaying())
-			UIMusic.stop();
+		if(UIMusic.isPlaying()) UIMusic.stop();
 		gameMusic.play();
 		
 		Gdx.input.setCursorCatched(true);

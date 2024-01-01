@@ -7,9 +7,9 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
-		config.setTitle("2D Arena Shooter");
+		config.setTitle("Space Arena");
 		config.useVsync(true);
-		config.setWindowedMode(900, 600);
+		config.setWindowedMode(1200, 800);
 		new Lwjgl3Application(new ArenaShooterGame(), config);
 	}
 }

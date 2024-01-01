@@ -11,14 +11,14 @@ public class RandomGenerator {
 
 	
 	public int generateRandomInXRanges() {
-		int randomRangeIndex = randomGenerator.nextInt(xRanges.size()); // 0 1 2 size-1
+		int randomRangeIndex = randomGenerator.nextInt(xRanges.size());
 		Range selectedRange = xRanges.get(randomRangeIndex);
 		
 		return randomGenerator.nextInt(selectedRange.max - selectedRange.min + 1) + selectedRange.min;	
 	}
 	
 	public int generateRandomInYRanges() {
-		int randomRangeIndex = randomGenerator.nextInt(yRanges.size()); // 0 1 2 size-1
+		int randomRangeIndex = randomGenerator.nextInt(yRanges.size()); 
 		Range selectedRange = yRanges.get(randomRangeIndex);
 		
 		return randomGenerator.nextInt(selectedRange.max - selectedRange.min + 1) + selectedRange.min;	

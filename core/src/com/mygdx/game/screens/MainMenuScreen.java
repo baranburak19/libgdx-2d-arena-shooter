@@ -33,7 +33,7 @@ public class MainMenuScreen extends BaseScreen {
 		root.setFillParent(true);
 		stage.addActor(root);
 		
-		TextButton titleBtn = new TextButton("2D ARENA SHOOTER", skin);
+		TextButton titleBtn = new TextButton("SPACE ARENA", skin);
 		Table menuBtns = new Table();
 		
 		TextButton startBtn = new TextButton("Start", skin);
@@ -41,9 +41,9 @@ public class MainMenuScreen extends BaseScreen {
 		TextButton optionsBtn = new TextButton("Options", skin);
 		TextButton quitBtn = new TextButton("Quit", skin);
 		
-		root.add(titleBtn).growY().expandX();
+		root.add(titleBtn).size(700, 300).padBottom(50);
 		root.row();
-		root.add(menuBtns).center();
+		root.add(menuBtns);
 		
 		menuBtns.add(startBtn).fillX();
 		menuBtns.row();

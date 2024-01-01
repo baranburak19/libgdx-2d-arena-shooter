@@ -17,10 +17,12 @@ public class DBManager {
             }
 
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
-            createScoresTable();
         } catch (Exception e) {
+        	System.out.println("An exception occured while connecting to database");
             e.printStackTrace();
         }
+        
+        createScoresTable();
     }
     
     public void createScoresTable() {
