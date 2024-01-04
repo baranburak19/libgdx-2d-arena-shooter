@@ -321,7 +321,7 @@ public class GameScreen extends BaseScreen{
 							new Rectangle(playerShip.hitBox), 
 							2f));
 					playerShip.lives--;
-					playerShip.movementSpeed *= 0.8;
+					playerShip.movementSpeed *= 0.9;
 					playerDamagedSound.play(game.soundMultiplier);
 					if(playerShip.lives < 0 && !isGodMode) isGameOver = true;
 				} else {
