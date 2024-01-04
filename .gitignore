@@ -112,3 +112,6 @@ Thumbs.db
 /ios/xcode/native/
 /ios/IOSLauncher.app
 /ios/IOSLauncher.app.dSYM
+
+*.db
+/2d-arena-shooter-db
